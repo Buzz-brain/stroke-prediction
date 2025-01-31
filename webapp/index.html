@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stroke Prediction Model</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+    #predict-button {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        }
+        
+        #predict-button:hover {
+        background-color: #3e8e41;
+        }
+        
+        .prediction-results {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        }
+        
+        .prediction-results::before {
+        content: "Result: ";
+        font-weight: bold;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Stroke Prediction Model</h1>
+        <form id="prediction-form">
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender">
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age">
+            </div>
+            <div class="form-group">
+                <label for="hypertension">Hypertension:</label>
+                <select id="hypertension" name="hypertension">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="heart_disease">Heart Disease:</label>
+                <select id="heart_disease" name="heart_disease">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ever_married">Ever Married:</label>
+                <select id="ever_married" name="ever_married">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="work_type">Work Type:</label>
+                <select id="work_type" name="work_type">
+                    <option value="12">Private</option>
+                    <option value="11">Self-employed</option>
+                    <option value="10">Govt_job</option>
+                    <option value="9">Never_worked</option>
+                    <option value="8">Children</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Residence_type">Residence Type:</label>
+                <select id="Residence_type" name="Residence_type">
+                    <option value="1">Urban</option>
+                    <option value="0">Rural</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="avg_glucose_level">Average Glucose Level:</label>
+                <input type="number" id="avg_glucose_level" name="avg_glucose_level">
+            </div>
+            <div class="form-group">
+                <label for="bmi">BMI:</label>
+                <input type="number" id="bmi" name="bmi">
+            </div>
+            <div class="form-group">
+                <label for="smoking_status">Smoking Status:</label>
+                <select id="smoking_status" name="smoking_status">
+                    <option value="1">Smokes</option>
+                    <option value="0">Never smoked</option>
+                    <option value="2">Formerly smoked</option>
+                </select>
+            </div>
+            <button id="predict-button">Predict</button>
+        </form>
+        <div id="prediction-results" class="prediction-results"></div>
+    </div>
+
+   <script>
+    const form = document.getElementById('prediction-form');
+const predictButton = document.getElementById('predict-button');
+const predictionResults = document.getElementById('prediction-results');
+
+predictButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const inputData = {
+        gender: form.elements['gender'].value,
+        age: form.elements['age'].value,
+        hypertension: form.elements['hypertension'].value,
+        heart_disease: form.elements['heart_disease'].value,
+        ever_married: form.elements['ever_married'].value,
+        work_type: form.elements['work_type'].value,
+        Residence_type: form.elements['Residence_type'].value,
+        avg_glucose_level: form.elements['avg_glucose_level'].value,
+        bmi: form.elements['bmi'].value,
+        smoking_status: form.elements['smoking_status'].value
+    };
+
+    fetch('http://127.0.0.1:5000/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(inputData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const prediction = data.predictions[0];
+        if (prediction === 1) {
+            predictionResults.innerHTML = 'High risk of stroke';
+        } else {
+            predictionResults.innerHTML = 'Low risk of stroke';
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+   </script>
+</body>
+</html>
+
+
+
