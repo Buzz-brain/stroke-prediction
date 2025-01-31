@@ -6,3 +6,4 @@ services:
     startCommand: python deploy.py
     ports:
       - 5000:5000
+
