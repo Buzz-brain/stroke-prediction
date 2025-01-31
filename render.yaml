@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: stroke-prediction-model
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python deploy.py
+    ports:
+      - 5000:5000
